@@ -11,10 +11,15 @@ def btnClearDisplay():
     text_input.set(operator)
 
 def btnEqualsOutput():
-    global operator
-    output = str(eval(operator))
-    text_input.set(output)
-    operator = output
+        try:
+            global operator
+            output = str(eval(operator))
+            text_input.set(output)
+            operator = output
+        except SyntaxError:
+            text_input.set("Invalid")
+        except ZeroDivisionError:
+            text_input.set("Invalid")
 
 def btnBackspace():
     global operator
