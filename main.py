@@ -1,115 +1,148 @@
-from tkinter import*
-
-def btnClick(numbers):
-    global operator  # https://www.geeksforgeeks.org/global-local-variables-python/
-    operator = operator + str(numbers)
-    text_input.set(operator)
-
-def btnClearDisplay():
-    global operator
-    operator = ""
-    text_input.set(operator)
-
-def btnEqualsOutput():
-        try:
-            global operator
-            output = str(eval(operator))
-            text_input.set(output)
-            operator = output
-        except SyntaxError:
-            text_input.set("Invalid")
-        except ZeroDivisionError:
-            text_input.set("Invalid")
-
-def btnBackspace():
-    global operator
-    operator = operator[: -1]  # remove last character from string
-    text_input.set(operator)
+# implemented using classes
+from tkinter import *
 
 cal = Tk()
 cal.title("Smart Calculator")
 
-operator = ""
-text_input = StringVar()  # It's not possible to hand over a regular Python variable to a widget through a variable or
-                          #  textvariable option. The only kinds of variables for which this works are variables that
-                          # are subclassed from a class called Variable, defined in the Tkinter module.
-"""
-Defining the display box. Entry widget allows the user to enter a single line of text.
-1st arg: represents the parent window, where the entry widget should be placed.
-textvariable: In order to be able to retrieve the current text from your entry widget, 
-you must set this option to an instance of the StringVar class.
-insertwidth: Width of the insertion cursor
- 
-"""
-txtDisplay = Entry(cal, font=('arial', 20, 'bold'), textvariable=text_input, bd=30, insertwidth=4, bg="powder blue",
-                             justify='right').grid(columnspan=4)
+txtDisplay = Entry(cal, font=('arial', 20, 'bold'), bd=30, insertwidth=4, bg="powder blue",
+                             justify='right')
 
-btn7 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="7",
-              bg="powder blue", command=lambda: btnClick(7)).grid(row=1, column=0)  # use lambda when function has arguments. otherwise, w/o lambda
+class Calculator:
 
-btn8 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="8",
-              bg="powder blue", command=lambda: btnClick(8)).grid(row=1, column=1)
+    def __init__(self):
+        self.result = 0
+        self.current = 0
+        self.operator = ""
 
-btn9 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="9",
-              bg="powder blue", command=lambda: btnClick(9)).grid(row=1, column=2)
+    def btnClick(self, num):
+            self.operator = self.operator + str(num)
+            txtDisplay.delete(0, END)
+            txtDisplay.insert(0, self.operator)
+            self.expOutput(self.operator)
 
-Add_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="+",
-                 bg="powder blue", command=lambda: btnClick("+")).grid(row=1, column=3)
+    def expOutput(self, operator):
+        try:
+            self.result = str(eval(operator))
+            txtDisplay.delete(0, END)
+            txtDisplay.insert(0, string=self.operator + "=" + self.result)
+            self.current = 0
+        except SyntaxError:
+            txtDisplay.delete(0, END)
+            txtDisplay.insert(0, self.operator)
 
-# =======================================================================================================================
+    def oprtrClick(self, op):
+        if self.current is 0:
+            self.current = 1
+            self.operator = self.operator + op
+            txtDisplay.delete(0, END)
+            txtDisplay.insert(0, string=self.operator)
+        else:
+            self.operator = self.operator + op
+            self.expOutput(self.operator)
 
-btn4 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="4",
-              bg="powder blue", command=lambda: btnClick(4)).grid(row=2, column=0)
+    def equals(self):
+        self.operator = self.result
+        txtDisplay.delete(0, END)
+        txtDisplay.insert(0, string=self.operator)
 
-btn5 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="5",
-              bg="powder blue", command=lambda: btnClick(5)).grid(row=2, column=1)
+    def clear(self):
+        self.__init__()
+        txtDisplay.delete(0, END)
 
-btn6 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="6",
-              bg="powder blue", command=lambda: btnClick(6)).grid(row=2, column=2)
+    def delete(self):
+        self.operator = self.operator[: -1]
+        txtDisplay.delete(0, END)
+        txtDisplay.insert(0, string=self.operator)
 
-Sub_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="-",
-                 bg="powder blue", command=lambda: btnClick("-")).grid(row=2, column=3)
-
-# =======================================================================================================================
-
-btn1 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="1",
-              bg="powder blue", command=lambda: btnClick(1)).grid(row=3, column=0)
-
-btn2 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="2",
-              bg="powder blue", command=lambda: btnClick(2)).grid(row=3, column=1)
-
-btn3 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="3",
-              bg="powder blue", command=lambda: btnClick(3)).grid(row=3, column=2)
-
-Mul_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="*",
-                 bg="powder blue", command=lambda: btnClick("*")).grid(row=3, column=3)
-
-# =======================================================================================================================
+smartCal = Calculator()
 
 btn0 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="0",
-              bg="powder blue", command=lambda: btnClick(0)).grid(row=4, column=0)
+              bg="powder blue", command=lambda: smartCal.btnClick(0))
 
-btnClear = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="C",
-                  bg="powder blue", command=btnClearDisplay).grid(row=4, column=1)
+btn1 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="1",
+              bg="powder blue", command=lambda: smartCal.btnClick(1))
 
-btnEquals = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="=",
-                   bg="powder blue", command=btnEqualsOutput).grid(row=4, column=2)
+btn2 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="2",
+              bg="powder blue", command=lambda: smartCal.btnClick(2))
 
-Div_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="/",
-                 bg="powder blue", command=lambda: btnClick("/")).grid(row=4, column=3)
+btn3 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="3",
+              bg="powder blue", command=lambda: smartCal.btnClick(3))
 
-# =======================================================================================================================
+btn4 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="4",
+              bg="powder blue", command=lambda: smartCal.btnClick(4))
 
-btnLeftParentheses = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="(",
-              bg="powder blue", command=lambda: btnClick("(")).grid(row=5, column=0)
+btn5 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="5",
+              bg="powder blue", command=lambda: smartCal.btnClick(5))
 
-btnRightParentheses = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text=")",
-                  bg="powder blue", command=lambda: btnClick(")")).grid(row=5, column=1)
+btn6 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="6",
+              bg="powder blue", command=lambda: smartCal.btnClick(6))
+
+btn7 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="7",
+              bg="powder blue", command=lambda: smartCal.btnClick(7))
+
+btn8 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="8",
+              bg="powder blue", command=lambda: smartCal.btnClick(8))
+
+btn9 = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="9",
+              bg="powder blue", command=lambda: smartCal.btnClick(9))
 
 btnDecimal = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text=".",
-                   bg="powder blue", command=lambda: btnClick(".")).grid(row=5, column=2)
+                   bg="powder blue", command=lambda: smartCal.btnClick("."))
 
-btnBackspace = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="Delete",
-                 bg="powder blue", command=btnBackspace).grid(row=5, column=3)
+btnLeftParen = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="(",
+                   bg="powder blue", command=lambda: smartCal.btnClick("("))
+
+btnRightParen = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text=")",
+                   bg="powder blue", command=lambda: smartCal.btnClick(")"))
+
+Add_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="+",
+                 bg="powder blue", command=lambda: smartCal.oprtrClick("+"))
+
+Sub_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="-",
+                 bg="powder blue", command=lambda: smartCal.oprtrClick("-"))
+
+Mul_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="*",
+                 bg="powder blue", command=lambda: smartCal.oprtrClick("*"))
+
+Div_btn = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="/",
+                 bg="powder blue", command=lambda: smartCal.oprtrClick("/"))
+
+btnEquals = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="=",
+                   bg="powder blue", command=smartCal.equals)
+
+btnClear = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="C",
+                  bg="powder blue", command=smartCal.clear)
+
+btnBackspace = Button(cal, padx=16, pady=16, bd=8, fg="black", font=('arial', 20, 'bold'), text="⌫",
+                  bg="powder blue", command=smartCal.delete)
+
+# ~*~*~Positioning~*~*~
+
+txtDisplay.grid(columnspan=4)
+# =========ROW1================== #
+btn7.grid(row=1, column=0)
+btn8.grid(row=1, column=1)
+btn9.grid(row=1, column=2)
+Add_btn.grid(row=1, column=3)
+# =========ROW2================== #
+btn4.grid(row=2, column=0)
+btn5.grid(row=2, column=1)
+btn6.grid(row=2, column=2)
+Sub_btn.grid(row=2, column=3)
+# =========ROW3================== #
+btn1.grid(row=3, column=0)
+btn2.grid(row=3, column=1)
+btn3.grid(row=3, column=2)
+Mul_btn.grid(row=3, column=3)
+# =========ROW4================== #
+btn0.grid(row=4, column=0)
+btnClear.grid(row=4, column=1)
+btnEquals.grid(row=4, column=2)
+Div_btn.grid(row=4, column=3)
+# =========ROW5================== #
+btnDecimal.grid(row=5, column=0)
+btnLeftParen.grid(row=5, column=1)
+btnRightParen.grid(row=5, column=2)
+btnBackspace.grid(row=5, column=3)
 
 cal.mainloop()
