@@ -4,13 +4,16 @@ from tkinter import *
 cal = Tk()
 cal.title("Smart Calculator")
 
-txtDisplay = Entry(cal, font=('arial', 20, 'bold'), bd=30, insertwidth=4, bg="powder blue",
-                             justify='right')
+txtDisplay = Entry(cal, font=('Impact', 20, 'bold'), bd=30, insertwidth=4, bg="powder blue",
+                             fg="royal blue",justify='right')
+txtDisplay.insert(0, "Let's calculate!")
 
 
 class Calculator:
 
     def __init__(self):
+        self.var1 = ""
+        self.var2 = ""
         self.output = 0
         self.current = 0
         self.operator = ""
