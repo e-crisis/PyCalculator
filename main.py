@@ -12,8 +12,6 @@ txtDisplay.insert(0, "Let's calculate!")
 class Calculator:
 
     def __init__(self):
-        self.var1 = ""
-        self.var2 = ""
         self.output = 0
         self.current = 0
         self.operator = ""
